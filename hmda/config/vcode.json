@@ -1,7 +1,11 @@
 {
-    "V001": "ONE",
-    "V002": "TWO",
-    "V003": "THREE",
-    "V004": "FOUR",
-    "V005": "FIVE"
+    "edit_column": "B",
+    "sheet_name": "last-sheet",
+    "replacers": {
+        "V001": "ONE",
+        "V002": "TWO",
+        "V003": "THREE",
+        "V004": "FOUR",
+        "V005": "FIVE"
+    }
 }

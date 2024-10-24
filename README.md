@@ -6,18 +6,22 @@ An enterprise-grade HMDA automation tool.
 
 - GUI interface
 - Logging for better traceability
-- Error handling and user feedback
 - Event tracking and display
 
 ## Installation
 
 1. Ensure you have Python 3.9+ and Poetry installed.
+
+    ```bash
+    python --version
+    ```
+
 2. Clone this repository.
-3. Run `poetry install` to install dependencies.
+3. Run `pip install -r requirements.txt` to install dependencies.
 
 ## Usage
 
-1. Run `poetry run python hmda/main.py` to start the application.
+1. Run `python main.py` to start the application.
 2. Select the Excel file containing replacement instructions.
 3. Select the JSON configuration file.
 4. Click "Replace Files" to start the process.

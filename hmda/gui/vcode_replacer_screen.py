@@ -11,45 +11,81 @@ class VCodeReplacerScreen:
     def __init__(self, root: tk.Toplevel):
         self.root = root
         
-        self.excel_path = tk.StringVar()
+        self.excel_path1 = tk.StringVar()
+        self.excel_path2 = tk.StringVar()
+        self.excel_path3 = tk.StringVar()
+        self.excel_path4 = tk.StringVar()
+        self.email_option = tk.StringVar(value="send")
         self.vcode_path = os.path.join("hmda", "config", "vcode.json")
 
         logger.info("Initializing VCodeReplacerScreen")
         self.create_widgets()
 
     def create_widgets(self):
-        # Use a more efficient layout manager
+        # Using layout manager
         self.root.columnconfigure(1, weight=1)
         
-        # Excel file selection
-        self.label_excel = tk.Label(self.root, text="Excel File:")
-        self.label_excel.grid(row=0, column=0, padx=5, pady=5, sticky="e")
-        self.entry_excel = tk.Entry(self.root, textvariable=self.excel_path, width=50)
-        self.entry_excel.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
-        self.button_excel = tk.Button(self.root, text="Browse", command=self.browse_excel)
-        self.button_excel.grid(row=0, column=2, padx=5, pady=5)
+        # Excel file selection 1
+        self.label_excel1 = tk.Label(self.root, text="Excel 1:")
+        self.label_excel1.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        self.entry_excel1 = tk.Entry(self.root, textvariable=self.excel_path1, width=50)
+        self.entry_excel1.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        self.button_excel1 = tk.Button(self.root, text="Browse", command=lambda: self.browse_excel(self.excel_path1))
+        self.button_excel1.grid(row=0, column=2, padx=5, pady=5)
 
-        # V-Code file display
-        self.label_vcode = tk.Label(self.root, text="V-Code File:")
-        self.label_vcode.grid(row=1, column=0, padx=5, pady=5, sticky="e")
-        self.entry_vcode = tk.Entry(self.root, textvariable=tk.StringVar(value=self.vcode_path), state='readonly', width=50)
-        self.entry_vcode.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky="ew")
+        # Excel file selection 2
+        self.label_excel2 = tk.Label(self.root, text="Excel 2:")
+        self.label_excel2.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.entry_excel2 = tk.Entry(self.root, textvariable=self.excel_path2, width=50)
+        self.entry_excel2.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+        self.button_excel2 = tk.Button(self.root, text="Browse", command=lambda: self.browse_excel(self.excel_path2))
+        self.button_excel2.grid(row=1, column=2, padx=5, pady=5)
+
+        # Excel file selection 3
+        self.label_excel3 = tk.Label(self.root, text="Excel 3:")
+        self.label_excel3.grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.entry_excel3 = tk.Entry(self.root, textvariable=self.excel_path3, width=50)
+        self.entry_excel3.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
+        self.button_excel3 = tk.Button(self.root, text="Browse", command=lambda: self.browse_excel(self.excel_path3))
+        self.button_excel3.grid(row=2, column=2, padx=5, pady=5)
+
+         # Excel file selection 4
+        self.label_excel4 = tk.Label(self.root, text="Excel 4:")
+        self.label_excel4.grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        self.entry_excel4 = tk.Entry(self.root, textvariable=self.excel_path4, width=50)
+        self.entry_excel4.grid(row=3, column=1, padx=5, pady=5, sticky="ew")
+        self.button_excel4 = tk.Button(self.root, text="Browse", command=lambda: self.browse_excel(self.excel_path4))
+        self.button_excel4.grid(row=3, column=2, padx=5, pady=5)
+
+        # Email option
+        self.radio_frame = tk.Frame(self.root)
+        self.radio_frame.grid(row=4, column=0, columnspan=3, padx=5, pady=5)
+        self.radio_send = tk.Radiobutton(self.radio_frame, text="Send Email", variable=self.email_option, value="send")
+        self.radio_send.pack(side=tk.LEFT, padx=10)
+        self.radio_display = tk.Radiobutton(self.radio_frame, text="Display Email", variable=self.email_option, value="display")
+        self.radio_display.pack(side=tk.LEFT, padx=10)
+
+        # # V-Code file display
+        # self.label_vcode = tk.Label(self.root, text="V-Code File:")
+        # self.label_vcode.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        # self.entry_vcode = tk.Entry(self.root, textvariable=tk.StringVar(value=self.vcode_path), state='readonly', width=50)
+        # self.entry_vcode.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky="ew")
 
         # Replace button
-        self.button_replace = tk.Button(self.root, text="Replace Files", command=self.replace_vcode)
-        self.button_replace.grid(row=2, column=1, padx=5, pady=20)
+        self.button_replace = tk.Button(self.root, text="Execute", command=self.execute_action)
+        self.button_replace.grid(row=5, column=1, padx=5, pady=20)
 
         logger.debug("Widgets created successfully")
 
-    def browse_excel(self):
+    def browse_excel(self, string_var):
         logger.debug("Browse Excel button clicked")
         try:
             filename = filedialog.askopenfilename(
-                filetypes=[("Excel files", "*.xlsx *.xls")],
-                title="Select Excel File"
+                filetypes=[("Excel files", "*.xlsx *.xls *.xlsm *.csv")],
+                title="Select Excel or CSV File"
             )
             if filename:
-                self.excel_path.set(filename)
+                string_var.set(filename)
                 logger.info(f"Excel file selected: {filename}")
             else:
                 logger.warning("No file selected in browse_excel")
@@ -57,34 +93,25 @@ class VCodeReplacerScreen:
             logger.exception("Error in browse_excel")
             messagebox.showerror("Error", f"An error occurred while browsing for Excel file: {str(e)}")
 
-    def replace_vcode(self):
-        logger.debug("Replace V-Code button clicked")
-        excel_path = self.excel_path.get()
+    def execute_action(self):
+        logger.debug("Execute action button clicked")
+        excel_path1 = self.excel_path1.get()
+        excel_path2 = self.excel_path2.get()
+        excel_path3 = self.excel_path3.get()
+        excel_path4 = self.excel_path4.get()
         
-        if not excel_path:
-            logger.warning("No Excel file selected")
+        if not any([excel_path1, excel_path2, excel_path3, excel_path4]):
+            logger.warning("Excel file not selected correctly")
             messagebox.showerror("Error", "Please select a valid Excel file.")
             return
 
-        if not os.path.exists(self.vcode_path):
-            logger.error(f"V-Code file not found at {self.vcode_path}")
-            messagebox.showerror("Error", f"V-Code file not found at {self.vcode_path}")
-            return
-
         try:
-            logger.info(f"Loading V-Code data from {self.vcode_path}")
-            vcode_data = VCodeService.load_vcode(self.vcode_path)
-            
-            event_tracker.add_event("HMDA_FILE_LOADED", f"Loaded HMDA file: {excel_path}")
-            
-            logger.info(f"Replacing V-Code in {excel_path}")
-            VCodeService.replace_vcode(excel_path, vcode_data)
-            
-            event_tracker.add_event("HMDA_FILE_PROCESSED", f"Processed HMDA file: {excel_path}")
+            logger.info(f"Invoking V-Code Replacer Service")
+            VCodeService.execute(excel_path1, excel_path2, excel_path3, excel_path4)
             
             logger.info("V-Code replacement completed successfully")
-            messagebox.showinfo("Success", "V-Code replaced successfully!")
+            messagebox.showinfo("Success", "Replace V-Code step completed successfully!")
         except Exception as e:
-            logger.exception("An error occurred during file replacement")
+            logger.exception("An error occurred during V-Code replacement")
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
-            event_tracker.add_event("ERROR", f"Error processing HMDA file: {str(e)}")
+            

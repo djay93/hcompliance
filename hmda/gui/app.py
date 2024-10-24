@@ -1,10 +1,9 @@
 import tkinter as tk
-from typing import Type
+from typing import Type, Union
 from datetime import datetime
 
 from hmda.utils.logger import get_logger
 from hmda.gui.vcode_replacer_screen import VCodeReplacerScreen
-from hmda.gui.warning_screen import WarningScreen
 from hmda.gui.hello_world import HelloScreen
 from hmda.gui.event_log_screen import EventLogScreen
 from hmda.core.event_tracker import EventTracker
@@ -14,20 +13,19 @@ logger = get_logger(__name__)
 class GUI:
     def __init__(self, root: tk.Tk):
         self.root = root
-        self.center_window(self.root, 800, 400)  # Increased width to accommodate new layout
-        self.root.title("HMDA File Replacer")
+        self.center_window(self.root, 800, 400)  
+        self.root.title("HMDA Automation")
         
         logger.info("🖥️ Initializing GUI")
         
-        self.label = tk.Label(root, text="HMDA File Replacer Options:")
+        self.label = tk.Label(root, text="HMDA Automation Steps:")
         self.label.pack(pady=10)
 
         self.event_tracker = EventTracker()
 
         self.buttons = [
-            ("V-Code Replacer", self.show_vcode_replacer),
-            ("Warning Screen", self.show_warning),
             ("Hello World", self.show_hello_world),
+            ("Replace V-Codes (step 42-46)", self.show_vcode_replacer),
             ("Event Log", self.show_event_log)
         ]
 
@@ -35,13 +33,13 @@ class GUI:
             frame = tk.Frame(root)
             frame.pack(fill=tk.X, padx=10, pady=5)
 
-            label = tk.Label(frame, text=text, width=15, anchor='w')
+            label = tk.Label(frame, text=text, width=24, anchor='w')
             label.pack(side=tk.LEFT)
 
-            last_executed = tk.Label(frame, text="Never", width=20)
+            last_executed = tk.Label(frame, text="Never", width=15)
             last_executed.pack(side=tk.LEFT)
 
-            status = tk.Label(frame, text="Not started", width=15, fg="gray")
+            status = tk.Label(frame, text="Not started", width=10, fg="gray")
             status.pack(side=tk.LEFT)
 
             button = tk.Button(frame, text="Run", command=lambda cmd=command, lbl=text: self.run_command(cmd, lbl))
@@ -59,14 +57,14 @@ class GUI:
         getattr(self, f"{label.lower().replace(' ', '_')}_status").config(text="Completed", fg="green")
 
     @staticmethod
-    def center_window(window: tk.Tk | tk.Toplevel, width: int, height: int) -> None:
+    def center_window(window: Union[tk.Tk, tk.Toplevel], width: int, height: int) -> None:
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
         x = (screen_width - width) // 2
         y = (screen_height - height) // 2
         window.geometry(f"{width}x{height}+{x}+{y}")
 
-    def show_screen(self, screen_class: Type[VCodeReplacerScreen | WarningScreen | HelloScreen | EventLogScreen], title: str) -> None:
+    def show_screen(self, screen_class: Type[Union[VCodeReplacerScreen, HelloScreen, EventLogScreen]], title: str) -> None:
         logger.info(f"Opening {title} screen")
         self.root.withdraw()
         new_window = tk.Toplevel(self.root)
@@ -76,10 +74,7 @@ class GUI:
         new_window.protocol("WM_DELETE_WINDOW", lambda: self.on_close(new_window))
 
     def show_vcode_replacer(self) -> None:
-        self.show_screen(VCodeReplacerScreen, "VCode Replacer")
-
-    def show_warning(self) -> None:
-        self.show_screen(WarningScreen, "Warning")
+        self.show_screen(VCodeReplacerScreen, "Replace VCodes")
 
     def show_hello_world(self) -> None:
         self.show_screen(HelloScreen, "Hello World")
@@ -110,5 +105,5 @@ class GUI:
 
     def run(self):
         logger.info("Starting GUI")
-        self.update_status()  # Start the status update loop
+        self.update_status()
         self.root.mainloop()
